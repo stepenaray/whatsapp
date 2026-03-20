@@ -1,3 +1,8 @@
+const fs = require("fs")
+
+if (!fs.existsSync("./session")) {
+  fs.mkdirSync("./session")
+}
 const {
   default: makeWASocket,
   useMultiFileAuthState,
@@ -56,7 +61,7 @@ app.listen(PORT, () => {
 
 // ================= START BOT =================
 async function startBot() {
-  const { state, saveCreds } = await useMultiFileAuthState("session")
+  const { state, saveCreds } = await useMultiFileAuthState("./session")
 
   const sock = makeWASocket({
   auth: state

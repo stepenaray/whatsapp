@@ -6,6 +6,26 @@ const {
 
 const axios = require("axios")
 const express = require("express")
+const app = express()
+
+const PORT = process.env.PORT || 3000
+
+app.get("/", (req, res) => {
+  res.send("Bot is alive")
+})
+
+app.get("/ping", (req, res) => {
+  res.send("pong")
+})
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT)
+})
+
+// supaya Railway tidak stop app
+setInterval(() => {
+  console.log("Bot still running...")
+}, 10000)
 
 // ================= CONFIG =================
 const TIKTOK_APIS = [

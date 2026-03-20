@@ -39,9 +39,22 @@ async function startBot() {
   const { state, saveCreds } = await useMultiFileAuthState("session")
 
   const sock = makeWASocket({
-    auth: state,
-    printQRInTerminal: true
-  })
+  auth: state
+})
+
+sock.ev.on("connection.update", (update) => {
+  const { connection, qr } = update
+
+  if (qr) {
+    console.log("SCAN QR DI SINI:")
+    const qrcode = require("qrcode-terminal")
+    qrcode.generate(qr, { small: true })
+  }
+
+  if (connection === "open") {
+    console.log("✅ BOT CONNECTED")
+  }
+})
 
   sock.ev.on("creds.update", saveCreds)
 

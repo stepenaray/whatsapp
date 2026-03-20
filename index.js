@@ -5,7 +5,7 @@ const {
 } = require("@whiskeysockets/baileys")
 
 const axios = require("axios")
-const qrcode = require("qrcode-terminal")
+const express = require("express")
 
 // ================= CONFIG =================
 const TIKTOK_APIS = [
@@ -21,6 +21,20 @@ const IG_APIS = [
 const MAX_RETRY = 5
 // ==========================================
 
+// ================= EXPRESS SERVER (WAJIB DI RAILWAY) =================
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.get("/", (req, res) => {
+  res.send("WhatsApp bot is running")
+})
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT)
+})
+// =====================================================================
+
+// ================= START BOT =================
 async function startBot() {
   const { state, saveCreds } = await useMultiFileAuthState("session")
 
@@ -33,6 +47,7 @@ async function startBot() {
 
   sock.ev.on("connection.update", (update) => {
     const { connection, lastDisconnect } = update
+
     if (connection === "close") {
       if (lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
         startBot()
@@ -73,9 +88,10 @@ async function startBot() {
           for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
             try {
               let res = await axios.get(api + encodeURIComponent(url))
-              // cek properti video
+
               if (res.data?.video?.noWatermark) return res.data.video.noWatermark
               if (res.data?.video) return res.data.video
+
             } catch (err) {
               console.log(`API error ${api} attempt ${attempt}: ${err.message}`)
             }
@@ -90,7 +106,7 @@ async function startBot() {
         let videoUrl = await downloadWithFallback(url, TIKTOK_APIS)
 
         if (!videoUrl)
-          return sock.sendMessage(jid, { text: "❌ Vail download TikTok" })
+          return sock.sendMessage(jid, { text: "❌ vail download TikTok" })
 
         await sock.sendMessage(jid, {
           video: { url: videoUrl },
@@ -104,7 +120,7 @@ async function startBot() {
         let videoUrl = await downloadWithFallback(url, IG_APIS)
 
         if (!videoUrl)
-          return sock.sendMessage(jid, { text: "❌ Vail download Instagram" })
+          return sock.sendMessage(jid, { text: "❌ vail download Instagram" })
 
         await sock.sendMessage(jid, {
           video: { url: videoUrl },

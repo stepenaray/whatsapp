@@ -21,7 +21,12 @@ async function startBot() {
     logger: P({ level: "silent" }),
     auth: state
   })
-
+// ===== you number here =====
+if (!sock.authState.creds.registered) {
+  const phoneNumber = "1543xxxxxxxxxx" // you number
+  const code = await sock.requestPairingCode(phoneNumber)
+  console.log("PAIRING CODE:", code)
+}
   sock.ev.on("connection.update", (update) => {
     const { connection, lastDisconnect } = update
 
